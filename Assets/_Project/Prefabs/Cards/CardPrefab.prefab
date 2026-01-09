@@ -287,6 +287,8 @@ GameObject:
   - component: {fileID: 3441883609342233263}
   - component: {fileID: 6559129298150727978}
   - component: {fileID: -4034751081157867258}
+  - component: {fileID: 2496650053621931187}
+  - component: {fileID: 4770576370281223338}
   m_Layer: 5
   m_Name: CardPrefab
   m_TagString: Untagged
@@ -387,6 +389,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardInteraction
   selectOffset: 40
   hoverScale: 1.1
+--- !u!225 &2496650053621931187
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6179433463356718217}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &4770576370281223338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6179433463356718217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: 220
+  m_MinHeight: -1
+  m_PreferredWidth: 220
+  m_PreferredHeight: 320
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &7710152517555635072
 GameObject:
   m_ObjectHideFlags: 0

@@ -59,15 +59,23 @@ public class CardInteraction : MonoBehaviour, IPointerClickHandler, IPointerEnte
 
     private void ToggleSelection()
     {
-        _isSelected = !_isSelected;
-
-        if (_isSelected)
+        if (!_isSelected)
         {
+            // NEW: Check Limit
+            if (_deckManager != null && !_deckManager.CanSelectMore())
+            {
+                // Optional: Add a "Buzz" sound or red flash here
+                Debug.Log("Bandwidth Full! Deselect a card first.");
+                return; // Stop here, do not select
+            }
+
+            _isSelected = true;
             _rectTransform.anchoredPosition += new Vector2(0, selectOffset);
             if (_deckManager != null) _deckManager.SelectCard(_display.GetData());
         }
         else
         {
+            _isSelected = false;
             _rectTransform.anchoredPosition -= new Vector2(0, selectOffset);
             transform.localScale = Vector3.one;
             if (_deckManager != null) _deckManager.DeselectCard(_display.GetData());

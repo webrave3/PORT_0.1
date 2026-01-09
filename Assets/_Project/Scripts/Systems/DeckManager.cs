@@ -1,12 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
-using TMPro; // Needed for UI references
+using TMPro;
 
 public class DeckManager : MonoBehaviour
 {
     [Header("Configuration")]
     public List<CardData> masterDeck = new List<CardData>();
-    public int maxHandSize = 8;
+    public int maxHandSize = 8;        // RAM (How many you hold)
+    public int maxSelectionSize = 5;   // Bandwidth (How many you play)
 
     [Header("Visual References")]
     public GameObject cardPrefab;
@@ -28,17 +29,31 @@ public class DeckManager : MonoBehaviour
     {
         _scoreManager = FindFirstObjectByType<ScoreManager>();
 
+        if (GameManager.Instance != null)
+        {
+            if (GameManager.Instance.RunDeck.Count > 0)
+            {
+                masterDeck.Clear();
+                masterDeck.AddRange(GameManager.Instance.RunDeck);
+            }
+            else
+            {
+                GameManager.Instance.RunDeck.Clear();
+                GameManager.Instance.RunDeck.AddRange(masterDeck);
+            }
+        }
+        InitializeDeck();
+    }
+
+    public void InitializeDeck()
+    {
+        // Re-sync if needed (redundant safety)
         if (GameManager.Instance != null && GameManager.Instance.RunDeck.Count > 0)
         {
             masterDeck.Clear();
             masterDeck.AddRange(GameManager.Instance.RunDeck);
         }
 
-        InitializeDeck();
-    }
-
-    public void InitializeDeck()
-    {
         drawPile.Clear();
         hand.Clear();
         discardPile.Clear();
@@ -49,6 +64,7 @@ public class DeckManager : MonoBehaviour
         drawPile.AddRange(masterDeck);
         ShuffleDrawPile();
         RefillHand();
+        UpdateDeckCountUI();
     }
 
     public void ShuffleDrawPile()
@@ -94,71 +110,52 @@ public class DeckManager : MonoBehaviour
         if (display != null) display.Setup(data);
     }
 
-    // --- FUSION MECHANIC ---
-    public bool AttemptFusion(CardInteraction sourceCard, CardInteraction targetCard)
+    // --- SELECTION LOGIC (UPDATED) ---
+    public bool CanSelectMore()
     {
-        CardData sourceData = sourceCard.GetData();
-        CardData targetData = targetCard.GetData();
-
-        // 1. Validation: Must be same card, must have upgrade
-        if (sourceData != targetData) return false;
-        if (sourceData.nextTierCard == null)
-        {
-            Debug.Log("Asset is already a Monopoly (Max Tier).");
-            return false;
-        }
-
-        // 2. Logic: Remove 2 Old, Add 1 New
-        hand.Remove(sourceData); // Removes first instance
-        hand.Remove(targetData); // Removes second instance
-        hand.Add(sourceData.nextTierCard);
-
-        // 3. Visuals: Destroy old objects, spawn new one
-        // We defer destruction slightly to let the drag event finish cleanly
-        Destroy(sourceCard.gameObject);
-        Destroy(targetCard.gameObject);
-
-        SpawnCardVisual(sourceData.nextTierCard);
-        UpdateDeckCountUI();
-
-        Debug.Log($"MERGER EXECUTED: {sourceData.cardName} + {targetData.cardName} -> {sourceData.nextTierCard.cardName}");
-        return true;
+        return selectedCards.Count < maxSelectionSize;
     }
 
-    // --- SELECTION & SCORING ---
+    // ... inside DeckManager class ...
+
     public void SelectCard(CardData card)
     {
-        if (!selectedCards.Contains(card)) selectedCards.Add(card);
+        if (!selectedCards.Contains(card) && CanSelectMore())
+        {
+            selectedCards.Add(card);
+            // NEW: Update UI Preview
+            if (_scoreManager != null) _scoreManager.UpdateHandPreview(selectedCards);
+        }
     }
 
     public void DeselectCard(CardData card)
     {
-        if (selectedCards.Contains(card)) selectedCards.Remove(card);
+        if (selectedCards.Contains(card))
+        {
+            selectedCards.Remove(card);
+            // NEW: Update UI Preview
+            if (_scoreManager != null) _scoreManager.UpdateHandPreview(selectedCards);
+        }
     }
 
+    // Ensure PlaySelectedHand clears the preview
     public void PlaySelectedHand()
     {
-        if (rerollButton != null) rerollButton.SetActive(false);
         if (selectedCards.Count == 0) return;
         if (_scoreManager != null && !_scoreManager.TryConsumeHand()) return;
 
-        int handScore = 0;
-        int handVol = 0;
-
-        foreach (var card in selectedCards)
-        {
-            handScore += card.baseYield;
-            handVol += card.volatility;
-        }
-
+        // Calculate and Commit
         if (_scoreManager != null)
         {
-            _scoreManager.AddVolatility(handVol);
-            _scoreManager.AddScore(handScore);
+            int score = _scoreManager.CalculateAndCommitScore(selectedCards);
+            if (TurnManager.Instance != null) TurnManager.Instance.OnHandPlayed(score);
         }
 
         MoveSelectedToDiscard();
         RefillHand();
+
+        // Clear Preview
+        if (_scoreManager != null) _scoreManager.UpdateHandPreview(selectedCards);
     }
 
     public void DiscardSelectedHand()
@@ -185,14 +182,12 @@ public class DeckManager : MonoBehaviour
             }
         }
         selectedCards.Clear();
-        RefreshHandVisuals();
-        UpdateDeckCountUI();
-    }
 
-    private void RefreshHandVisuals()
-    {
+        // Refresh visuals to remove the gaps
         foreach (Transform child in handContainer) Destroy(child.gameObject);
         foreach (CardData data in hand) SpawnCardVisual(data);
+
+        UpdateDeckCountUI();
     }
 
     private void ReshuffleDiscard()
@@ -210,6 +205,27 @@ public class DeckManager : MonoBehaviour
         ShuffleDrawPile();
         RefillHand();
         if (rerollButton != null) rerollButton.SetActive(false);
+    }
+
+    // --- FUSION ---
+    public bool AttemptFusion(CardInteraction source, CardInteraction target)
+    {
+        CardData sourceData = source.GetData();
+        CardData targetData = target.GetData();
+
+        if (sourceData != targetData) return false;
+        if (sourceData.nextTierCard == null) return false;
+
+        hand.Remove(sourceData);
+        hand.Remove(targetData);
+        hand.Add(sourceData.nextTierCard);
+
+        Destroy(source.gameObject);
+        Destroy(target.gameObject);
+        SpawnCardVisual(sourceData.nextTierCard);
+
+        UpdateDeckCountUI();
+        return true;
     }
 
     private void UpdateDeckCountUI()

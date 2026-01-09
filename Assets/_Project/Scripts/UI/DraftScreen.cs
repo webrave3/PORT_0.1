@@ -1,41 +1,33 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // Needed for Button
+using UnityEngine.UI;
 
 public class DraftScreen : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject draftPanelUI; // DRAG YOUR DRAFT PANEL HERE
+    public GameObject draftPanelUI;
     public GameObject cardPrefab;
     public Transform container;
 
-    [Header("Data")]
-    public List<CardData> allPossibleCards;
-
     public void ShowDraft()
     {
-        // 1. Turn on the Visual Panel
         if (draftPanelUI != null) draftPanelUI.SetActive(true);
-        else Debug.LogError("Draft Panel UI is not linked in Inspector!");
-
-        // 2. Clear old cards from the container
         foreach (Transform child in container) Destroy(child.gameObject);
 
-        // 3. Pick 3 Random Cards
+        // --- FIX: Only Get Tier 1 Cards ---
+        List<CardData> pool = CardLibrary.GetDraftPool();
+        // ----------------------------------
+
         for (int i = 0; i < 3; i++)
         {
-            if (allPossibleCards.Count == 0) break;
-
-            CardData randomCard = allPossibleCards[Random.Range(0, allPossibleCards.Count)];
+            if (pool.Count == 0) break;
+            CardData randomCard = pool[Random.Range(0, pool.Count)];
 
             GameObject cardObj = Instantiate(cardPrefab, container);
-
-            // Setup Visuals
             CardDisplay display = cardObj.GetComponent<CardDisplay>();
             if (display != null) display.Setup(randomCard);
 
-            // Add Click Listener
             Button btn = cardObj.AddComponent<Button>();
             btn.onClick.AddListener(() => SelectCard(randomCard));
         }
@@ -49,10 +41,13 @@ public class DraftScreen : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RunDeck.Add(card);
-            GameManager.Instance.CurrentQuota += 50;
+
+            // --- REMOVED: Manual Quota Increase ---
+            // GameManager.Instance.currentQuota += 50; 
+            // The Calendar system in GameManager now handles this automatically.
         }
 
-        // Restart Scene
+        // Restart Scene (In the future, this will go to the next battle)
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

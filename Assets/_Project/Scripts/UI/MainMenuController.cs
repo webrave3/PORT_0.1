@@ -4,17 +4,24 @@ using System.Collections.Generic;
 
 public class MainMenuController : MonoBehaviour
 {
-    public List<CardData> starterDeck; // Drag your 20 starting cards here in Inspector
+    
 
-    public void OnStartGamePressed()
+    public void OnStartGameClicked()
     {
-        // 1. Initialize the Run Data
+        // 1. Generate Deck using the Library
+        List<CardData> starterDeck = CardLibrary.GetStarterDeck();
+
+        // 2. Pass to GameManager (The one spawned by Bootstrapper)
         if (GameManager.Instance != null)
         {
             GameManager.Instance.StartNewRun(starterDeck);
         }
+        else
+        {
+            Debug.LogError("GameManager is missing! Did you start from Bootstrapper?");
+        }
 
-        // 2. Load the Game
-        SceneManager.LoadScene(2);
+        // 3. Load GameLoop
+        SceneManager.LoadScene("02_GameLoop");
     }
 }
