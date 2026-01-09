@@ -24,8 +24,8 @@ public class CardImporter : EditorWindow
             string line = lines[i];
             if (string.IsNullOrWhiteSpace(line)) continue;
 
-            // SPLIT by Semicolon (European Standard)
-            string[] data = line.Split(';');
+            
+            string[] data = line.Split(',');
 
             // Safety check: Do we have enough columns?
             if (data.Length < 9)

@@ -1,0 +1,21 @@
+﻿ID,Name,Sector,Tier,Cost,Yield,Volatility,Illegal,Description
+TECH_01,Server Farm,Tech,1,50,8,3,FALSE,Standard high-yield infrastructure.
+TECH_02,AI Startup,Tech,1,60,10,5,FALSE,High potential but generates heat.
+TECH_03,Fiber Optic Line,Tech,2,120,15,2,FALSE,Efficient data transmission.
+TECH_04,Quantum Core,Tech,3,300,40,10,FALSE,Massive yield. Massive heat.
+FIN_01,Savings Account,Finance,1,20,2,0,FALSE,Safe. Boring. Reliable.
+FIN_02,Index Fund,Finance,1,40,4,1,FALSE,Market average returns.
+FIN_03,Hedge Fund,Finance,2,100,12,4,FALSE,Aggressive growth strategy.
+FIN_04,Central Bank,Finance,3,500,5,0,FALSE,Too big to fail.
+NRG_01,Solar Panel,Energy,1,30,3,1,FALSE,Renewable and steady.
+NRG_02,Oil Rig,Energy,1,40,6,4,FALSE,Dirty energy. High output.
+NRG_03,Fusion Reactor,Energy,2,150,20,2,FALSE,The future of power.
+NRG_04,Grid Monopoly,Energy,3,400,35,5,FALSE,Total control of the lights.
+CRP_01,Meme Coin,Crypto,1,10,0,10,FALSE,Might be worth nothing. Or millions.
+CRP_02,Blockchain Node,Crypto,1,50,15,15,FALSE,Calculates hashes. Generates heat.
+CRP_03,NFT Collection,Crypto,2,100,25,20,FALSE,Digital monkey pictures.
+CRP_04,Exchange Collapse,Crypto,3,0,0,50,FALSE,Everything is gone.
+ILL_01,Insider Trading,Illegal,1,0,50,5,TRUE,They do not know what we know.
+ILL_02,Ponzi Scheme,Illegal,1,0,100,10,TRUE,Pay the old investors with new money.
+ILL_03,Tax Evasion,Illegal,1,0,0,0,TRUE,Generates cash but no yield.
+BND_01,Treasury Bond,Bonds,1,50,1,-5,FALSE,Cools down the volatility.

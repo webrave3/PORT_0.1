@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: CRP_04
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: CRP_04
+  cardName: Exchange Collapse
+  sector: Crypto
+  tier: 3
+  cashCost: 0
+  baseYield: 0
+  volatility: 50
+  isIllegal: 0
+  description: Everything is gone.
+  icon: {fileID: 0}
