@@ -1,0 +1,3 @@
+﻿ID,Name,Sector,Tier,Cost,Yield,Volatility,Illegal,Description
+TECH_01,Server Farm,Tech,1,50,5,2,FALSE,Adds small heat but consistent yield. CRPT_01
+CRPT_01,Pump & Dump,Crypto,1,0,0,10,TRUE,"High risk, high reward illegal play."
