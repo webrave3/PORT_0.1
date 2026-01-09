@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public enum GameState { Boot, MainMenu, Gameplay, Paused }
 
@@ -8,13 +9,15 @@ public class GameManager : MonoBehaviour
 
     public GameState CurrentState { get; private set; }
 
-    // Global Run Data (Persists between battles)
-    public int PlayerCash;
-    public int CurrentInsolvency;
+    // --- NEW: RUN PERSISTENCE ---
+    [Header("Current Run Data")]
+    public List<CardData> RunDeck = new List<CardData>(); // The player's growing deck
+    public int RunCash = 0;
+    public int CurrentQuota = 100; // Track difficulty scaling
+    // -----------------------------
 
     private void Awake()
     {
-        // Singleton Logic
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -22,12 +25,20 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Keeps this object alive across scenes
+        DontDestroyOnLoad(gameObject);
     }
 
     public void ChangeState(GameState newState)
     {
         CurrentState = newState;
-        Debug.Log($"Game State Changed to: {newState}");
+    }
+
+    // Call this when clicking "Start Game" from Main Menu
+    public void StartNewRun(List<CardData> starterDeck)
+    {
+        RunDeck.Clear();
+        RunDeck.AddRange(starterDeck);
+        CurrentQuota = 100; // Reset difficulty
+        RunCash = 0;
     }
 }

@@ -917,6 +917,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bfafb9351a1c9a48a1bfd8560c80d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
+  starterDeck:
+  - {fileID: 11400000, guid: b041f4d2fb913634c943b0b1cc779938, type: 2}
+  - {fileID: 11400000, guid: 6582fd7963c05ad4b8dfc2ae81f4eab3, type: 2}
+  - {fileID: 11400000, guid: f5a70171db0110042bb981de4d976b21, type: 2}
+  - {fileID: 11400000, guid: 0e2a35d1b65cd964aa711b0207a06e17, type: 2}
+  - {fileID: 11400000, guid: 631ee530cbd31ce4cb0cecedf1dc781f, type: 2}
+  - {fileID: 11400000, guid: d18e77acf768cb34a9436b8e84ee7503, type: 2}
+  - {fileID: 11400000, guid: 3159ed0d3d42a7945ba0c77f22fb68cc, type: 2}
+  - {fileID: 11400000, guid: bfe253d2d10ddd94ba28c2000e21c1bb, type: 2}
+  - {fileID: 11400000, guid: 4f8e1879bd32aae40a675084a6719825, type: 2}
+  - {fileID: 11400000, guid: 86902d698c0df0c4e9b70ccc6d4c61cc, type: 2}
+  - {fileID: 11400000, guid: 34c1c7bcb54efb847b72e232f993d4c2, type: 2}
+  - {fileID: 11400000, guid: d05925f039c27e542978ebd739b96f72, type: 2}
+  - {fileID: 11400000, guid: 27911254b1bfcdf449d3d720578e0ee7, type: 2}
+  - {fileID: 11400000, guid: 21b59af1125fd4e488badb05b75ede73, type: 2}
+  - {fileID: 11400000, guid: 48a3e8624c83d1e4e9d13e76ca09e9a7, type: 2}
+  - {fileID: 11400000, guid: e42c6e120b4aa504fa6b095a71885abc, type: 2}
+  - {fileID: 11400000, guid: 7f6ec279c7a6e5844a6b889a303afc10, type: 2}
+  - {fileID: 11400000, guid: 0ca808a5849152c4ebb26586d6214b95, type: 2}
+  - {fileID: 11400000, guid: d36d90e9c0b3f994c8b70da40fecf886, type: 2}
+  - {fileID: 11400000, guid: c5ecb4d9aa73dbf48a90054474bcaf56, type: 2}
+  - {fileID: 11400000, guid: b62c7aca03da4464ba20b5be31a5340b, type: 2}
 --- !u!4 &1820155813
 Transform:
   m_ObjectHideFlags: 0

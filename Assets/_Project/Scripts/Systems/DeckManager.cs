@@ -21,9 +21,22 @@ public class DeckManager : MonoBehaviour
 
     private ScoreManager _scoreManager;
 
+    public GameObject rerollButton; // Drag the button here
+
+    public TMPro.TextMeshProUGUI deckCountText; // NEW
     private void Awake()
     {
         _scoreManager = FindFirstObjectByType<ScoreManager>();
+
+        // --- NEW: LOAD FROM GAME MANAGER ---
+        if (GameManager.Instance != null && GameManager.Instance.RunDeck.Count > 0)
+        {
+            // If we have a run going, use that deck instead of the Inspector default
+            masterDeck.Clear();
+            masterDeck.AddRange(GameManager.Instance.RunDeck);
+        }
+        // ------------------------------------
+
         InitializeDeck();
     }
 
@@ -41,6 +54,7 @@ public class DeckManager : MonoBehaviour
 
         // Initial Draw: Fill to max
         RefillHand();
+        UpdateDeckCountUI();
     }
 
     public void ShuffleDrawPile()
@@ -62,6 +76,7 @@ public class DeckManager : MonoBehaviour
         {
             DrawCard(cardsNeeded);
         }
+        UpdateDeckCountUI();
     }
 
     public void DrawCard(int amount)
@@ -78,6 +93,7 @@ public class DeckManager : MonoBehaviour
             drawPile.RemoveAt(0);
             hand.Add(data);
             SpawnCardVisual(data);
+            UpdateDeckCountUI();
         }
     }
 
@@ -111,44 +127,54 @@ public class DeckManager : MonoBehaviour
     // 1. PLAY HAND (Consumes "Market Hour")
     public void PlaySelectedHand()
     {
+        if (rerollButton != null) rerollButton.SetActive(false);
         if (selectedCards.Count == 0) return;
 
-        // Ask ScoreManager if we have hands left
-        if (_scoreManager != null && !_scoreManager.TryConsumeHand())
+        if (_scoreManager != null && !_scoreManager.TryConsumeHand()) return;
+
+        // 1. Calculate Score & Volatility
+        int handScore = 0;
+        int handVol = 0;
+
+        foreach (var card in selectedCards)
         {
-            Debug.Log("No Market Hours remaining!");
-            return;
+            handScore += card.baseYield;
+            handVol += card.volatility; // Add up the heat
         }
 
-        // Add Score
-        int handScore = CalculateCurrentScore();
-        if (_scoreManager != null) _scoreManager.AddScore(handScore);
+        // 2. Apply Effects
+        if (_scoreManager != null)
+        {
+            _scoreManager.AddVolatility(handVol); // First add heat
+            _scoreManager.AddScore(handScore);    // Then try to score (will fail if overheated)
+        }
 
-        // Move to Discard
         MoveSelectedToDiscard();
-
-        // THE LOOP: Draw new cards to replace them
         RefillHand();
+        UpdateDeckCountUI();
     }
 
     // 2. DISCARD HAND (Consumes "Shred", saves "Market Hour")
     public void DiscardSelectedHand()
     {
+        if (rerollButton != null) rerollButton.SetActive(false);
         if (selectedCards.Count == 0) return;
 
-        // Ask ScoreManager if we have discards left
-        if (_scoreManager != null && !_scoreManager.TryConsumeDiscard())
+        if (_scoreManager != null && !_scoreManager.TryConsumeDiscard()) return;
+
+        // GDD Rule: Discarding generates 2% Heat per card
+        int discardHeatCost = selectedCards.Count * 2;
+
+        Debug.Log($"Shredding assets. Heat +{discardHeatCost}%");
+
+        if (_scoreManager != null)
         {
-            Debug.Log("No Shreds remaining!");
-            return;
+            _scoreManager.AddVolatility(discardHeatCost);
         }
 
-        // Just move to discard (No Score)
-        Debug.Log("Shredding assets...");
         MoveSelectedToDiscard();
-
-        // THE LOOP: Draw new cards
         RefillHand();
+        UpdateDeckCountUI();
     }
 
     private void MoveSelectedToDiscard()
@@ -163,6 +189,7 @@ public class DeckManager : MonoBehaviour
         }
         selectedCards.Clear();
         RefreshHandVisuals();
+        UpdateDeckCountUI();
     }
 
     private void RefreshHandVisuals()
@@ -176,5 +203,32 @@ public class DeckManager : MonoBehaviour
         drawPile.AddRange(discardPile);
         discardPile.Clear();
         ShuffleDrawPile();
+    }
+    public void RerollOpeningHand()
+    {
+        // 1. Return hand to Draw Pile
+        drawPile.AddRange(hand);
+        hand.Clear();
+
+        // 2. Clear Visuals
+        foreach (Transform child in handContainer) Destroy(child.gameObject);
+
+        // 3. Shuffle & Redraw
+        ShuffleDrawPile();
+        RefillHand();
+
+        // 4. Disable Button (One use only)
+        if (rerollButton != null) rerollButton.SetActive(false);
+
+        Debug.Log("Pre-Market Reroll used.");
+    }
+    private void UpdateDeckCountUI()
+    {
+        if (deckCountText != null)
+        {
+            // Total cards = Draw Pile + Hand + Discard Pile
+            int total = drawPile.Count + hand.Count + discardPile.Count;
+            deckCountText.text = $"DECK: {total}";
+        }
     }
 }

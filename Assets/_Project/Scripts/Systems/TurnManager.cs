@@ -18,9 +18,6 @@ public class TurnManager : MonoBehaviour
         CurrentPhase = TurnPhase.Start;
         Debug.Log("--- NEW TURN START ---");
 
-        // MVP Logic: Draw 5 cards at start of turn
-        _deckManager.DrawCard(5);
-
         CurrentPhase = TurnPhase.PlayerAction;
         Debug.Log("Phase: Player Action. Waiting for input...");
     }
