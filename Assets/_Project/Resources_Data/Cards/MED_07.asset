@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: MED_07
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: MED_07
+  cardName: Angry Man
+  sector: Media
+  tier: 1
+  cashCost: 35
+  baseYield: 15
+  volatility: 30
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: f98d8332e5b7f3343927e137bd8e9378, type: 2}
+  description: 'News for people who like to be frightened by things that aren''t
+    happening. Tonight: Is your toaster communist?'
+  icon: {fileID: 0}

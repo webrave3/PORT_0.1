@@ -1,91 +1,162 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Collections.Generic;
 
 public class CardImporter : EditorWindow
 {
-    [MenuItem("Quantitative Easing/Import Cards from CSV")]
+    // Adjust this path if your CSV is elsewhere
+    private const string CSV_PATH = "Assets/_Project/Resources_Data/Cards.csv";
+
+    // Where the ScriptableObjects will be saved
+    private const string OUTPUT_PATH = "Assets/_Project/Resources_Data/Cards/";
+
+    [MenuItem("Tools/Import Cards (CSV)")]
     public static void ImportCards()
     {
-        // 1. Find the CSV file
-        string path = "Assets/_Project/Resources_Data/Cards.csv";
-        if (!File.Exists(path))
+        if (!File.Exists(CSV_PATH))
         {
-            Debug.LogError($"Could not find CSV at {path}");
+            Debug.LogError($"CSV not found at: {CSV_PATH}");
             return;
         }
 
-        // 2. Read all lines
-        string[] lines = File.ReadAllLines(path);
+        string[] lines = File.ReadAllLines(CSV_PATH);
+        // Skip header row
+        if (lines.Length <= 1) return;
 
-        // 3. Loop through lines (Skip row 0 because it is headers)
+        // Ensure output folder exists
+        if (!Directory.Exists(OUTPUT_PATH))
+        {
+            Directory.CreateDirectory(OUTPUT_PATH);
+        }
+
+        // Dictionary to hold the mapping of ID -> CardData for the second pass (linking)
+        Dictionary<string, CardData> idToAssetMap = new Dictionary<string, CardData>();
+
+        // --- PASS 1: Create/Update Assets ---
+        Debug.Log("--- Starting Import Pass 1: Creating Assets ---");
+
         for (int i = 1; i < lines.Length; i++)
         {
             string line = lines[i];
             if (string.IsNullOrWhiteSpace(line)) continue;
 
-            
-            string[] data = line.Split(',');
+            // Split by comma, but respect quotes (for descriptions with commas)
+            string[] data = SplitCsvLine(line);
 
-            // Safety check: Do we have enough columns?
-            if (data.Length < 9)
+            // Columns: 
+            // 0: ID, 1: NextTierID, 2: Name, 3: Sector, 4: Tier, 
+            // 5: Cost, 6: Yield, 7: Volatility, 8: Illegal, 9: Description
+
+            if (data.Length < 10)
             {
-                Debug.LogWarning($"Skipping row {i}: Not enough columns.");
+                Debug.LogWarning($"Skipping line {i + 1}: Insufficient columns.");
                 continue;
             }
 
-            // 4. Parse Data
-            string id = data[0];
-            string cardName = data[1];
-            string sector = data[2];
-            int tier = int.Parse(data[3]);
-            int cost = int.Parse(data[4]);
-            int yieldVal = int.Parse(data[5]);
-            int vol = int.Parse(data[6]);
-            bool illegal = bool.Parse(data[7].ToLower()); // Handles "TRUE" or "true"
-            string desc = data[8];
+            string id = data[0].Trim();
+            string fileName = $"{id}.asset";
+            string fullPath = OUTPUT_PATH + fileName;
 
-            // 5. Create or Update the Asset
-            CreateCardAsset(id, cardName, sector, tier, cost, yieldVal, vol, illegal, desc);
+            // Load existing or create new
+            CardData card = AssetDatabase.LoadAssetAtPath<CardData>(fullPath);
+            if (card == null)
+            {
+                card = ScriptableObject.CreateInstance<CardData>();
+                AssetDatabase.CreateAsset(card, fullPath);
+            }
+
+            // Fill Data
+            card.id = id;
+            // Store nextTierID temporarily? No, we will read CSV again in Pass 2.
+
+            card.cardName = data[2].Trim();
+            card.sector = data[3].Trim();
+            int.TryParse(data[4], out card.tier);
+            int.TryParse(data[5], out card.cashCost);
+            int.TryParse(data[6], out card.baseYield);
+            int.TryParse(data[7], out card.volatility);
+            bool.TryParse(data[8], out card.isIllegal);
+
+            // Handle Description (remove wrapping quotes if present)
+            string desc = data[9].Trim();
+            if (desc.StartsWith("\"") && desc.EndsWith("\""))
+            {
+                desc = desc.Substring(1, desc.Length - 2);
+            }
+            // Fix double quotes becoming single quotes from CSV standard
+            desc = desc.Replace("\"\"", "\"");
+            card.description = desc;
+
+            EditorUtility.SetDirty(card);
+
+            // Add to dictionary for linking
+            if (!idToAssetMap.ContainsKey(id))
+            {
+                idToAssetMap.Add(id, card);
+            }
         }
 
         AssetDatabase.SaveAssets();
-        Debug.Log("Success! Cards Imported.");
+
+        // --- PASS 2: Link Tiers ---
+        Debug.Log("--- Starting Import Pass 2: Linking Evolutions ---");
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] data = SplitCsvLine(lines[i]);
+            string currentID = data[0].Trim();
+            string nextTierID = data[1].Trim();
+
+            if (!string.IsNullOrEmpty(nextTierID))
+            {
+                if (idToAssetMap.ContainsKey(currentID) && idToAssetMap.ContainsKey(nextTierID))
+                {
+                    CardData currentCard = idToAssetMap[currentID];
+                    CardData nextCard = idToAssetMap[nextTierID];
+
+                    currentCard.nextTierCard = nextCard;
+                    EditorUtility.SetDirty(currentCard);
+                }
+                else
+                {
+                    Debug.LogWarning($"Could not link {currentID} -> {nextTierID}. Target asset might be missing.");
+                }
+            }
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Import Complete! All cards updated and linked.");
     }
 
-    static void CreateCardAsset(string id, string name, string sector, int tier, int cost, int yieldVal, int vol, bool illegal, string desc)
+    // Standard CSV splitter that handles commas inside quotes
+    private static string[] SplitCsvLine(string line)
     {
-        string folderPath = "Assets/_Project/Resources_Data/Cards";
+        List<string> result = new List<string>();
+        bool inQuotes = false;
+        string currentEntry = "";
 
-        // Ensure folder exists
-        if (!AssetDatabase.IsValidFolder(folderPath))
+        for (int i = 0; i < line.Length; i++)
         {
-            // Simple check: assuming Resources_Data exists, create Cards inside it
-            // For robust code, we manually create folders, but for now assuming you made the folder manually
+            char c = line[i];
+
+            if (c == '\"')
+            {
+                inQuotes = !inQuotes;
+            }
+            else if (c == ',' && !inQuotes)
+            {
+                result.Add(currentEntry);
+                currentEntry = "";
+            }
+            else
+            {
+                currentEntry += c;
+            }
         }
+        result.Add(currentEntry); // Add last entry
 
-        string assetPath = $"{folderPath}/{id}.asset";
-
-        // Load existing or create new
-        CardData card = AssetDatabase.LoadAssetAtPath<CardData>(assetPath);
-        if (card == null)
-        {
-            card = ScriptableObject.CreateInstance<CardData>();
-            AssetDatabase.CreateAsset(card, assetPath);
-        }
-
-        // Apply Data
-        card.id = id;
-        card.cardName = name;
-        card.sector = sector;
-        card.tier = tier;
-        card.cashCost = cost;
-        card.baseYield = yieldVal;
-        card.volatility = vol;
-        card.isIllegal = illegal;
-        card.description = desc;
-
-        // Mark as "Dirty" so Unity knows to save it
-        EditorUtility.SetDirty(card);
+        return result.ToArray();
     }
 }

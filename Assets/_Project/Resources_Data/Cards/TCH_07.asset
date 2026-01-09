@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: TCH_07
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: TCH_07
+  cardName: Goggles
+  sector: Tech
+  tier: 1
+  cashCost: 55
+  baseYield: 14
+  volatility: 15
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: 064fedc4c003c3b4cacf453535c6eb65, type: 2}
+  description: An advertising agency disguised as a search engine. It knows which
+    rash cream you need before you develop the rash.
+  icon: {fileID: 0}

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: TCH_01
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: TCH_01
+  cardName: Pear
+  sector: Tech
+  tier: 1
+  cashCost: 50
+  baseYield: 12
+  volatility: 10
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: 249c0777d22092c459665a74c60b579c, type: 2}
+  description: A luxury lifestyle brand selling dongles. The devices shatter exactly
+    two weeks before the new model releases.
+  icon: {fileID: 0}

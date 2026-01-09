@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: IND_08
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: IND_08
+  cardName: Price Hike
+  sector: Pharma
+  tier: 2
+  cashCost: 0
+  baseYield: 40
+  volatility: 30
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: 9682bfe2e3303dc43a812e1ae033b891, type: 2}
+  description: We bought the patent for insulin and raised the price 500%. It's just
+    simple supply and demand.
+  icon: {fileID: 0}

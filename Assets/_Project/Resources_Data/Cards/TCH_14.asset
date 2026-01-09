@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: TCH_14
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: TCH_14
+  cardName: Silicon God
+  sector: Tech
+  tier: 2
+  cashCost: 0
+  baseYield: 50
+  volatility: 60
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: ad8965a9e77b37a42ab84c57cfa892dd, type: 2}
+  description: The graphics card is now smarter than the user. It is mining crypto
+    in your sleep to pay for its own electricity.
+  icon: {fileID: 0}

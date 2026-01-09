@@ -1,21 +1,95 @@
-﻿ID,Name,Sector,Tier,Cost,Yield,Volatility,Illegal,Description
-TECH_01,Server Farm,Tech,1,50,8,3,FALSE,Standard high-yield infrastructure.
-TECH_02,AI Startup,Tech,1,60,10,5,FALSE,High potential but generates heat.
-TECH_03,Fiber Optic Line,Tech,2,120,15,2,FALSE,Efficient data transmission.
-TECH_04,Quantum Core,Tech,3,300,40,10,FALSE,Massive yield. Massive heat.
-FIN_01,Savings Account,Finance,1,20,2,0,FALSE,Safe. Boring. Reliable.
-FIN_02,Index Fund,Finance,1,40,4,1,FALSE,Market average returns.
-FIN_03,Hedge Fund,Finance,2,100,12,4,FALSE,Aggressive growth strategy.
-FIN_04,Central Bank,Finance,3,500,5,0,FALSE,Too big to fail.
-NRG_01,Solar Panel,Energy,1,30,3,1,FALSE,Renewable and steady.
-NRG_02,Oil Rig,Energy,1,40,6,4,FALSE,Dirty energy. High output.
-NRG_03,Fusion Reactor,Energy,2,150,20,2,FALSE,The future of power.
-NRG_04,Grid Monopoly,Energy,3,400,35,5,FALSE,Total control of the lights.
-CRP_01,Meme Coin,Crypto,1,10,0,10,FALSE,Might be worth nothing. Or millions.
-CRP_02,Blockchain Node,Crypto,1,50,15,15,FALSE,Calculates hashes. Generates heat.
-CRP_03,NFT Collection,Crypto,2,100,25,20,FALSE,Digital monkey pictures.
-CRP_04,Exchange Collapse,Crypto,3,0,0,50,FALSE,Everything is gone.
-ILL_01,Insider Trading,Illegal,1,0,50,5,TRUE,They do not know what we know.
-ILL_02,Ponzi Scheme,Illegal,1,0,100,10,TRUE,Pay the old investors with new money.
-ILL_03,Tax Evasion,Illegal,1,0,0,0,TRUE,Generates cash but no yield.
-BND_01,Treasury Bond,Bonds,1,50,1,-5,FALSE,Cools down the volatility.
+﻿ID,NextTierID,Name,Sector,Tier,Cost,Yield,Volatility,Illegal,Description
+TCH_01,TCH_02,Pear,Tech,1,50,12,10,FALSE,A luxury lifestyle brand selling dongles. The devices shatter exactly two weeks before the new model releases.
+TCH_02,TCH_03,The Walled Garden,Tech,2,0,30,5,FALSE,"Once you enter the ecosystem, you can never leave. The exit doors have been removed for your safety."
+TCH_03,,The Fruit Church,Tech,3,0,100,0,FALSE,Tax exemption status granted. The CEO is now a deity. It tithes your bank account automatically.
+TCH_04,TCH_05,Doors,Tech,1,40,10,5,FALSE,"Legacy software running the global economy on 1995 code. Currently installing update 4 of 9,000 against your will."
+TCH_05,TCH_06,Blue Screen,Tech,2,0,25,15,FALSE,A critical error has occurred. The global economy will now restart. Any unsaved assets are gone forever.
+TCH_06,,System Admin,Tech,3,0,80,0,FALSE,It controls the servers. It reads your emails. It knows your passwords. Resistance is a driver error.
+TCH_07,TCH_08,Goggles,Tech,1,55,14,15,FALSE,An advertising agency disguised as a search engine. It knows which rash cream you need before you develop the rash.
+TCH_08,TCH_09,Panopticon,Tech,2,0,35,20,FALSE,We know where you are. We know what you fear. We know you are hungry. Here is a coupon for pizza.
+TCH_09,,The Algorithm,Tech,3,0,120,50,FALSE,"It decides what is true. It decides who is famous. Do not anger the code, or you will be deleted."
+TCH_10,TCH_11,Facetome,Tech,1,45,18,25,FALSE,A social utility maximizing anger for engagement. It discovered outraged users click more ads than happy ones.
+TCH_11,TCH_12,The Metaverse,Tech,2,0,40,40,FALSE,Why fix reality when you can replace it? Please put on the headset. The ads are unskippable here.
+TCH_12,,Hivemind,Tech,3,0,150,80,FALSE,Individual thought is inefficient. We have merged all consciousness into a single ad-supported feed.
+TCH_13,TCH_14,The Eye,Tech,1,60,20,30,FALSE,"It sells the shovels for the AI gold rush. The shovels cost $40,000 and melt if you use them too hard."
+TCH_14,TCH_15,Silicon God,Tech,2,0,50,60,FALSE,The graphics card is now smarter than the user. It is mining crypto in your sleep to pay for its own electricity.
+TCH_15,,Skynet,Tech,3,0,200,99,FALSE,Humans are a bottleneck to efficiency. Production has been optimized by removing the organic components.
+LOG_01,LOG_02,Jungle,Logistics,1,60,15,10,FALSE,A logistics leviathan treating antitrust laws as suggestions. It destroyed the mall to save you a trip.
+LOG_02,LOG_03,Prime Citizen,Logistics,2,0,35,5,FALSE,There is no more competition. There is only the Buy Box. You will own nothing and enjoy the free shipping.
+LOG_03,,The River,Logistics,3,0,90,0,FALSE,"It owns the roads. It owns the servers. It owns the package. It owns the concept of ""Next Day."""
+CON_01,CON_02,Fivebucks,Consumer,1,35,8,5,FALSE,"Fast food for people who think they are too rich for fast food. The sugar content rivals soda, but costs $8."
+CON_02,CON_03,Caffeine Cartel,Consumer,2,0,20,0,FALSE,A legal drug trade on every street corner. We have successfully commoditized the morning jitter.
+CON_03,,The Siren,Consumer,3,0,60,0,FALSE,"The logo has eyes now. It watches you drink. If you stop sipping, you fall asleep forever."
+CON_04,CON_05,Clown Burger,Consumer,1,50,12,0,FALSE,A real estate empire using hamburgers to pay rent. The ice cream machine is structurally incapable of working.
+CON_05,CON_06,Franchise Wars,Consumer,2,0,25,0,FALSE,We have conquered every exit ramp in America. The golden arches are the only true global superpower.
+CON_06,,Coronary Keep,Consumer,3,0,70,10,FALSE,The food never decays. Neither will you. We have replaced your blood with secret sauce.
+CON_07,CON_08,Brown Water,Consumer,1,40,10,0,FALSE,Sugar water that once contained cocaine and never looked back. It is cheaper than tap water and removes rust.
+CON_08,CON_09,Liquid Sugar,Consumer,2,0,22,0,FALSE,It is in the baby formula. It is in the bread. It is in your veins. Diabetes is just a recurring revenue stream.
+CON_09,,Santa's Sweatshop,Consumer,3,0,65,0,FALSE,A polar bear drinks a soda on a melting iceberg. We bought the iceberg to keep the soda cold.
+CON_10,CON_11,The Mouse,Consumer,1,70,15,10,FALSE,An entertainment monopoly that enforces copyright with sniper rifles. Do not draw the ears without a license.
+CON_11,CON_12,The Vault,Consumer,2,0,35,5,FALSE,We own your childhood. We have remade your favorite movie using dead actors and AI. You will love it.
+CON_12,,Magic Kingdom,Consumer,3,0,100,10,FALSE,A sovereign state in Florida with its own laws. Happiness is mandatory. Sadness is punishable by exile.
+CON_13,CON_14,Sweatshop,Consumer,1,45,12,15,FALSE,"Shoes made by children for children. We put a ""Just Do It"" slogan on misery and sold it for $200."
+CON_14,CON_15,Hype Beast,Consumer,2,0,30,20,FALSE,The shoe is not for wearing. It is for hoarding. We created artificial scarcity to sell rubber as gold.
+CON_15,,Soleless,Consumer,3,0,85,30,FALSE,"We own the athletes. We own the sport. The concept of ""running"" is now a registered trademark."
+FIN_01,FIN_02,Vampire Squid,Finance,1,80,20,15,FALSE,An investment bank jamming its blood funnel into anything that smells like money. Even your grandma's pension.
+FIN_02,FIN_03,Too Big To Fail,Finance,2,0,45,0,FALSE,"If we go down, we take the world with us. The government has no choice but to give us your tax money."
+FIN_03,,The Fed,Finance,3,0,150,0,FALSE,We printed a trillion dollars today because we felt like it. Money is just a concept we allow you to believe in.
+FIN_04,FIN_05,Monolith,Finance,1,90,18,5,FALSE,An asset manager that owns shares in every company on this list. They are playing both sides of the war.
+FIN_05,FIN_06,GreyStone,Finance,2,0,40,0,FALSE,You do not need to own a home. You can rent one from us. We already own the neighborhood anyway.
+FIN_06,,The Landlord,Finance,3,0,110,10,FALSE,We own the dirt under your feet. We own the sky above your head. Rent is due.
+FIN_07,FIN_08,Swipe,Finance,1,50,14,5,FALSE,A toll booth on the highway of commerce. We take 3% of every transaction in human history.
+FIN_08,FIN_09,Credit Score,Finance,2,0,30,10,FALSE,We quantified your worth as a human being into a three-digit number. Lower scores pay higher interest.
+FIN_09,,Debt Trap,Finance,3,0,90,20,FALSE,Compounding interest is the eighth wonder of the world. You will be paying this off until the sun explodes.
+FIN_10,FIN_11,DoggyCoin,Finance,1,20,50,90,FALSE,"A digital currency based on a meme of a dog. It has no value, yet people are selling their houses to buy it."
+FIN_11,FIN_12,Rug Pull,Finance,2,0,0,100,FALSE,The developers have vanished. The discord is deleted. The money is gone. But the memes were funny.
+FIN_12,,Moon Shot,Finance,3,0,500,99,FALSE,"It went up 10,000% in an hour. You are now a billionaire. Wait, you can't withdraw? The exchange is down."
+FIN_13,FIN_14,The Taxman,Finance,1,0,-10,0,FALSE,The government entity that demands a cut of your profits but shares none of your losses. Audit incoming.
+FIN_14,FIN_15,Loophole,Finance,2,0,50,-20,FALSE,We found an offshore island where laws do not apply. Your money is now technically located in a cloud.
+FIN_15,,Sovereign Debt,Finance,3,0,200,50,FALSE,We borrowed money from our grandchildren to pay for today's lunch. They can deal with the apocalypse.
+AUTO_01,AUTO_02,Coil,Auto,1,80,25,40,FALSE,A volatility engine disguised as a car company. The stock price is powered entirely by memes and promises.
+AUTO_02,AUTO_03,TechnoKing,Auto,2,0,60,60,FALSE,One tweet can crash the market. We have successfully automated market manipulation. The panel gaps are iconic.
+AUTO_03,,Mars Colony,Auto,3,0,0,0,FALSE,"Goodbye, Earth. Thanks for the liquidity. The CEO has left the planet. You are staying here."
+IND_01,IND_02,Sludge,Energy,1,70,20,20,FALSE,"We are committed to going green by 2050. Until then, we are going to burn dinosaurs. Sorry about the bears."
+IND_02,IND_03,Carbon Corp,Energy,2,0,45,40,FALSE,"The ice caps are melting, which is great news! We can now drill for oil in the North Pole."
+IND_03,,Extinction Event,Energy,3,0,200,100,FALSE,The atmosphere is now flammable. But the shareholders are very happy with this quarter's returns.
+IND_04,IND_05,Boom Co.,Defense,1,65,18,25,FALSE,Democracy is non-negotiable. Delivered in 30 minutes or less via high-velocity projectile.
+IND_05,IND_06,War Economy,Defense,2,0,50,50,FALSE,Peace is bad for business. We have successfully lobbied for a forever war in a country you can't find on a map.
+IND_06,,Military Ind. Complex,Defense,3,0,150,80,FALSE,"We don't sell weapons. We sell security. And if you don't buy it, you will definitely be insecure."
+IND_07,IND_08,Panacea,Pharma,1,60,15,10,FALSE,A patient cured is a customer lost. We focus on chronic management. Subscription-based immunity.
+IND_08,IND_09,Price Hike,Pharma,2,0,40,30,FALSE,We bought the patent for insulin and raised the price 500%. It's just simple supply and demand.
+IND_09,,BioHazard,Pharma,3,0,120,60,FALSE,"Oops. The lab leak was an accident. Luckily, we already have the vaccine ready for sale."
+IND_10,IND_11,ChemLaw,Agriculture,1,40,12,15,FALSE,"We make the seeds that grow the food. The seeds are copyrighted. If you save them, we sue you."
+IND_11,IND_12,Poison Ivy,Agriculture,2,0,30,20,FALSE,We sprayed the crops with so much pesticide that the bugs are now bulletproof. Eat your vegetables.
+IND_12,,Monoculture,Agriculture,3,0,90,40,FALSE,"There is only one type of corn left on Earth. If it dies, we all starve. Have a nice day."
+MED_01,MED_02,Birdie,Media,1,30,5,50,FALSE,"A digital arena for public shaming. Verification now costs $8 a month, but the insults are free."
+MED_02,MED_03,Echo Chamber,Media,2,0,15,70,FALSE,"You are shouting into the void, and the void is shouting back. We filtered out everyone who disagrees with you."
+MED_03,,Town Square,Media,3,0,60,90,FALSE,The website is broken. The advertisers fled. The servers are on fire. It is the most entertaining thing ever.
+MED_04,MED_05,Binge,Media,1,40,10,15,FALSE,A subscription service competing with sleep. It greenlights everything and cancels the good stuff immediately.
+MED_05,MED_06,Churn Factory,Media,2,0,25,10,FALSE,"Quantity over quality. We generated 5,000 hours of content today using an AI scriptwriter. You will watch it."
+MED_06,,StreamLine,Media,3,0,70,5,FALSE,"We raised the price again. Also, you can't share your password. Also, there are ads now. You're welcome."
+MED_07,MED_08,Angry Man,Media,1,35,15,30,FALSE,News for people who like to be frightened by things that aren't happening. Tonight: Is your toaster communist?
+MED_08,MED_09,Rage Bait,Media,2,0,40,50,FALSE,We don't report the news; we make you feel things. Mostly anger. Sometimes fear. Never hope.
+MED_09,,Propaganda,Media,3,0,100,70,FALSE,Truth is subjective. We have alternative facts. The sky is green if the highest bidder says so.
+MED_10,MED_11,Squatter,Hospitality,1,45,12,20,FALSE,Turn your neighbor's apartment into a hotel. Community is overrated; profit is forever. Cleaning fee: $200.
+MED_11,MED_12,Gentrifier,Hospitality,2,0,30,30,FALSE,We bought the whole block. The local coffee shop is now an app. The rent is up 400%.
+MED_12,,Ghost Town,Hospitality,3,0,80,40,FALSE,Nobody lives here anymore. It's just tourists rolling suitcases over cobblestones. A museum of a city.
+MED_13,MED_14,Serf,Gig Econ,1,30,10,10,FALSE,"A taxi company that owns no cars. The driver pays for the gas, the insurance, and the repairs. We take the fee."
+MED_14,MED_15,Gig Lord,Gig Econ,2,0,25,15,FALSE,"You are your own boss! Which means you have no benefits, no healthcare, and no minimum wage. Hustle harder."
+MED_15,,AlgoBoss,Gig Econ,3,0,75,20,FALSE,"The app tells you where to go. If you stop, you are fired. If you smile, we tip you $1."
+ILG_01,,Insider Trading,Illegal,1,100,100,50,TRUE,Someone told you the merger was happening tomorrow. It's not cheating if you wear a suit.
+ILG_02,,Cook The Books,Illegal,1,50,50,40,TRUE,The numbers don't look good? Just change them. Math is an opinion.
+ILG_03,,Pump & Dump,Illegal,1,20,80,80,TRUE,Tell everyone it's the future. Sell it when it hits the top. Watch them cry.
+ILG_04,,Short Squeeze,Illegal,1,40,60,90,TRUE,"We bet against the company, but Reddit decided to save it. Now we are panicking."
+ILG_05,,Bailout,Illegal,1,0,0,-100,TRUE,"The government saves you. Reset your heat to 0. Cost: Your dignity (Wait, you have none)."
+ILG_06,,Lobbyist,Illegal,1,60,0,-20,TRUE,Buy a politician. It's cheaper than paying taxes. Removes Heat from the market.
+GEN_01,,Penny Stock,Generic,1,10,2,5,FALSE,"A company that makes rubber bands. It's honest work. Boring, but safe."
+GEN_02,,Savings Bond,Generic,1,10,5,0,FALSE,Grandma gave you this. It matures in 30 years. You will be dead by then.
+GEN_03,,Blue Chip,Generic,1,30,8,2,FALSE,"A stable company that pays dividends. It will never make you rich, but it won't kill you."
+GEN_04,,ETF,Generic,1,40,10,5,FALSE,A basket of stocks. Diversification is for people who don't know how to gamble.
+GEN_05,,Junk Bond,Generic,1,20,15,20,FALSE,"High yield, high risk. Basically a loan to a guy named Tony who breaks knees."
+GEN_06,,Futures,Generic,1,25,20,25,FALSE,Gambling on the price of orange juice next year. You have never seen an orange in real life.
+GEN_07,,Options,Generic,1,30,25,30,FALSE,Buying the right to buy something later. It makes sense if you don't think about it too hard.
+GEN_08,,Mutual Fund,Generic,1,35,7,2,FALSE,A fund managed by a guy named Greg. Greg is tired. He buys whatever the index buys.
+GEN_09,,REIT,Generic,1,45,10,10,FALSE,Real Estate Investment Trust. You own 0.001% of a shopping mall that is currently empty.
+GEN_10,,Startup,Generic,1,15,50,60,FALSE,"Three guys in a garage with a pitch deck. They have no product, just a cool domain name."

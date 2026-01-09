@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: MED_01
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: MED_01
+  cardName: Birdie
+  sector: Media
+  tier: 1
+  cashCost: 30
+  baseYield: 5
+  volatility: 50
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: 3ad8f5ffbc8e0fd4bbb599a3686ee8cb, type: 2}
+  description: A digital arena for public shaming. Verification now costs $8 a month,
+    but the insults are free.
+  icon: {fileID: 0}

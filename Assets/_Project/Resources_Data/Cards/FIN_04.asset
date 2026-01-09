@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: FIN_04
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   id: FIN_04
-  cardName: Central Bank
+  cardName: Monolith
   sector: Finance
-  tier: 3
-  cashCost: 500
-  baseYield: 5
-  volatility: 0
+  tier: 1
+  cashCost: 90
+  baseYield: 18
+  volatility: 5
   isIllegal: 0
-  description: Too big to fail.
+  nextTierCard: {fileID: 11400000, guid: a9e0e9df84702464eb129bf5eaa476e8, type: 2}
+  description: An asset manager that owns shares in every company on this list. They
+    are playing both sides of the war.
   icon: {fileID: 0}

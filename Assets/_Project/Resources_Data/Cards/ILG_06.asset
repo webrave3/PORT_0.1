@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: ILG_06
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: ILG_06
+  cardName: Lobbyist
+  sector: Illegal
+  tier: 1
+  cashCost: 60
+  baseYield: 0
+  volatility: -20
+  isIllegal: 1
+  nextTierCard: {fileID: 0}
+  description: Buy a politician. It's cheaper than paying taxes. Removes Heat from
+    the market.
+  icon: {fileID: 0}

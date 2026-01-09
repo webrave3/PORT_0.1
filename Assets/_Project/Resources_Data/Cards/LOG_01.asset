@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: LOG_01
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: LOG_01
+  cardName: Jungle
+  sector: Logistics
+  tier: 1
+  cashCost: 60
+  baseYield: 15
+  volatility: 10
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: afe9bfccd34a4814a9ad89ee51095efd, type: 2}
+  description: A logistics leviathan treating antitrust laws as suggestions. It destroyed
+    the mall to save you a trip.
+  icon: {fileID: 0}

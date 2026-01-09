@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: CON_07
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: CON_07
+  cardName: Brown Water
+  sector: Consumer
+  tier: 1
+  cashCost: 40
+  baseYield: 10
+  volatility: 0
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: 42fffed0c4d84d842bff0cbfcf7ccb8a, type: 2}
+  description: Sugar water that once contained cocaine and never looked back. It
+    is cheaper than tap water and removes rust.
+  icon: {fileID: 0}

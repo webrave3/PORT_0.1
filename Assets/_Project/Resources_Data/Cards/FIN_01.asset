@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: FIN_01
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   id: FIN_01
-  cardName: Savings Account
+  cardName: Vampire Squid
   sector: Finance
   tier: 1
-  cashCost: 20
-  baseYield: 2
-  volatility: 0
+  cashCost: 80
+  baseYield: 20
+  volatility: 15
   isIllegal: 0
-  description: Safe. Boring. Reliable.
+  nextTierCard: {fileID: 11400000, guid: bfe253d2d10ddd94ba28c2000e21c1bb, type: 2}
+  description: An investment bank jamming its blood funnel into anything that smells
+    like money. Even your grandma's pension.
   icon: {fileID: 0}

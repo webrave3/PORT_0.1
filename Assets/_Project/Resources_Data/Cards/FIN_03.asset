@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: FIN_03
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   id: FIN_03
-  cardName: Hedge Fund
+  cardName: The Fed
   sector: Finance
-  tier: 2
-  cashCost: 100
-  baseYield: 12
-  volatility: 4
+  tier: 3
+  cashCost: 0
+  baseYield: 150
+  volatility: 0
   isIllegal: 0
-  description: Aggressive growth strategy.
+  nextTierCard: {fileID: 0}
+  description: We printed a trillion dollars today because we felt like it. Money
+    is just a concept we allow you to believe in.
   icon: {fileID: 0}

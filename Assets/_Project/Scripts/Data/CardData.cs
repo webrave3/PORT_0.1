@@ -1,24 +1,26 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "NewCard", menuName = "QuantitativeEasing/Card Data")]
 public class CardData : ScriptableObject
 {
     [Header("Identity")]
-    public string id;           // e.g., "TECH_001"
-    public string cardName;     // e.g., "Tech Startup"
+    public string id;
+    public string cardName;
 
     [Header("Stats")]
-    public string sector;       // Tech, Energy, Finance, etc.
-    public int tier;            // 1, 2, or 3
-    public int cashCost;        // For shop purchasing
+    public string sector;
+    public int tier;
+    public int cashCost;
 
     [Header("Combat Values")]
-    public int baseYield;       // Score generated
-    public int volatility;      // Heat generated
-    public bool isIllegal;      // Triggers Suspicion?
+    public int baseYield;
+    public int volatility;
+    public bool isIllegal;
+
+    [Header("Fusion")]
+    public CardData nextTierCard; // DRAG HERE: The card this becomes (e.g., Tech_01 -> Tech_02)
 
     [Header("Visuals")]
     [TextArea] public string description;
-    public Sprite icon;         // We will auto-link this later by name
+    public Sprite icon;
 }

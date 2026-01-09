@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc103a7eb0f7d614cbbbb9a679ed54b7, type: 3}
+  m_Name: IND_04
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  id: IND_04
+  cardName: Boom Co.
+  sector: Defense
+  tier: 1
+  cashCost: 65
+  baseYield: 18
+  volatility: 25
+  isIllegal: 0
+  nextTierCard: {fileID: 11400000, guid: 07b3d238c2865a842b497f349f166f91, type: 2}
+  description: Democracy is non-negotiable. Delivered in 30 minutes or less via high-velocity
+    projectile.
+  icon: {fileID: 0}

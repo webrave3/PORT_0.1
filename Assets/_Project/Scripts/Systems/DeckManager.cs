@@ -1,15 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro; // Needed for UI references
 
 public class DeckManager : MonoBehaviour
 {
     [Header("Configuration")]
     public List<CardData> masterDeck = new List<CardData>();
-    public int maxHandSize = 8; // "RAM" Limit
+    public int maxHandSize = 8;
 
     [Header("Visual References")]
     public GameObject cardPrefab;
     public Transform handContainer;
+    public GameObject rerollButton;
+    public TextMeshProUGUI deckCountText;
 
     [Header("Runtime State")]
     public List<CardData> drawPile = new List<CardData>();
@@ -21,21 +24,15 @@ public class DeckManager : MonoBehaviour
 
     private ScoreManager _scoreManager;
 
-    public GameObject rerollButton; // Drag the button here
-
-    public TMPro.TextMeshProUGUI deckCountText; // NEW
     private void Awake()
     {
         _scoreManager = FindFirstObjectByType<ScoreManager>();
 
-        // --- NEW: LOAD FROM GAME MANAGER ---
         if (GameManager.Instance != null && GameManager.Instance.RunDeck.Count > 0)
         {
-            // If we have a run going, use that deck instead of the Inspector default
             masterDeck.Clear();
             masterDeck.AddRange(GameManager.Instance.RunDeck);
         }
-        // ------------------------------------
 
         InitializeDeck();
     }
@@ -51,10 +48,7 @@ public class DeckManager : MonoBehaviour
 
         drawPile.AddRange(masterDeck);
         ShuffleDrawPile();
-
-        // Initial Draw: Fill to max
         RefillHand();
-        UpdateDeckCountUI();
     }
 
     public void ShuffleDrawPile()
@@ -68,14 +62,10 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    // --- REFILL LOGIC (The "Balatro" Loop) ---
     public void RefillHand()
     {
         int cardsNeeded = maxHandSize - hand.Count;
-        if (cardsNeeded > 0)
-        {
-            DrawCard(cardsNeeded);
-        }
+        if (cardsNeeded > 0) DrawCard(cardsNeeded);
         UpdateDeckCountUI();
     }
 
@@ -86,7 +76,7 @@ public class DeckManager : MonoBehaviour
             if (drawPile.Count == 0)
             {
                 if (discardPile.Count > 0) ReshuffleDiscard();
-                else return; // Truly empty
+                else return;
             }
 
             CardData data = drawPile[0];
@@ -104,7 +94,38 @@ public class DeckManager : MonoBehaviour
         if (display != null) display.Setup(data);
     }
 
-    // --- SELECTION ---
+    // --- FUSION MECHANIC ---
+    public bool AttemptFusion(CardInteraction sourceCard, CardInteraction targetCard)
+    {
+        CardData sourceData = sourceCard.GetData();
+        CardData targetData = targetCard.GetData();
+
+        // 1. Validation: Must be same card, must have upgrade
+        if (sourceData != targetData) return false;
+        if (sourceData.nextTierCard == null)
+        {
+            Debug.Log("Asset is already a Monopoly (Max Tier).");
+            return false;
+        }
+
+        // 2. Logic: Remove 2 Old, Add 1 New
+        hand.Remove(sourceData); // Removes first instance
+        hand.Remove(targetData); // Removes second instance
+        hand.Add(sourceData.nextTierCard);
+
+        // 3. Visuals: Destroy old objects, spawn new one
+        // We defer destruction slightly to let the drag event finish cleanly
+        Destroy(sourceCard.gameObject);
+        Destroy(targetCard.gameObject);
+
+        SpawnCardVisual(sourceData.nextTierCard);
+        UpdateDeckCountUI();
+
+        Debug.Log($"MERGER EXECUTED: {sourceData.cardName} + {targetData.cardName} -> {sourceData.nextTierCard.cardName}");
+        return true;
+    }
+
+    // --- SELECTION & SCORING ---
     public void SelectCard(CardData card)
     {
         if (!selectedCards.Contains(card)) selectedCards.Add(card);
@@ -115,66 +136,42 @@ public class DeckManager : MonoBehaviour
         if (selectedCards.Contains(card)) selectedCards.Remove(card);
     }
 
-    private int CalculateCurrentScore()
-    {
-        int total = 0;
-        foreach (var c in selectedCards) total += c.baseYield;
-        return total;
-    }
-
-    // --- ACTIONS ---
-
-    // 1. PLAY HAND (Consumes "Market Hour")
     public void PlaySelectedHand()
     {
         if (rerollButton != null) rerollButton.SetActive(false);
         if (selectedCards.Count == 0) return;
-
         if (_scoreManager != null && !_scoreManager.TryConsumeHand()) return;
 
-        // 1. Calculate Score & Volatility
         int handScore = 0;
         int handVol = 0;
 
         foreach (var card in selectedCards)
         {
             handScore += card.baseYield;
-            handVol += card.volatility; // Add up the heat
+            handVol += card.volatility;
         }
 
-        // 2. Apply Effects
         if (_scoreManager != null)
         {
-            _scoreManager.AddVolatility(handVol); // First add heat
-            _scoreManager.AddScore(handScore);    // Then try to score (will fail if overheated)
+            _scoreManager.AddVolatility(handVol);
+            _scoreManager.AddScore(handScore);
         }
 
         MoveSelectedToDiscard();
         RefillHand();
-        UpdateDeckCountUI();
     }
 
-    // 2. DISCARD HAND (Consumes "Shred", saves "Market Hour")
     public void DiscardSelectedHand()
     {
         if (rerollButton != null) rerollButton.SetActive(false);
         if (selectedCards.Count == 0) return;
-
         if (_scoreManager != null && !_scoreManager.TryConsumeDiscard()) return;
 
-        // GDD Rule: Discarding generates 2% Heat per card
         int discardHeatCost = selectedCards.Count * 2;
-
-        Debug.Log($"Shredding assets. Heat +{discardHeatCost}%");
-
-        if (_scoreManager != null)
-        {
-            _scoreManager.AddVolatility(discardHeatCost);
-        }
+        if (_scoreManager != null) _scoreManager.AddVolatility(discardHeatCost);
 
         MoveSelectedToDiscard();
         RefillHand();
-        UpdateDeckCountUI();
     }
 
     private void MoveSelectedToDiscard()
@@ -204,29 +201,21 @@ public class DeckManager : MonoBehaviour
         discardPile.Clear();
         ShuffleDrawPile();
     }
+
     public void RerollOpeningHand()
     {
-        // 1. Return hand to Draw Pile
         drawPile.AddRange(hand);
         hand.Clear();
-
-        // 2. Clear Visuals
         foreach (Transform child in handContainer) Destroy(child.gameObject);
-
-        // 3. Shuffle & Redraw
         ShuffleDrawPile();
         RefillHand();
-
-        // 4. Disable Button (One use only)
         if (rerollButton != null) rerollButton.SetActive(false);
-
-        Debug.Log("Pre-Market Reroll used.");
     }
+
     private void UpdateDeckCountUI()
     {
         if (deckCountText != null)
         {
-            // Total cards = Draw Pile + Hand + Discard Pile
             int total = drawPile.Count + hand.Count + discardPile.Count;
             deckCountText.text = $"DECK: {total}";
         }
