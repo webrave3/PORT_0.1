@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public enum GameState { Boot, MainMenu, Gameplay, Paused }
 
@@ -13,13 +14,17 @@ public class GameManager : MonoBehaviour
     public int RunCash = 0;
 
     [Header("The Calendar (Progression)")]
-    public int currentQuarter = 1; // "Ante"
-    public int currentMonth = 1;   // "Blind" (1, 2, or 3)
-    public int currentQuota = 25; // Target Score
+    public int currentQuarter = 1;
+    public int currentMonth = 1;
+    public int currentQuota = 25;
+
+    [Header("Market Forecast")]
+    public MarketEventData currentQuarterBoss; // The Event waiting at Month 3
+    private List<MarketEventData> _allEvents;
 
     // Difficulty Scaling Config
     private const int BASE_QUOTA = 25;
-    private const float QUARTER_SCALING = 2.0f; // Quota doubles every quarter
+    private const float QUARTER_SCALING = 2.0f;
 
     private void Awake()
     {
@@ -31,9 +36,11 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    }
 
-    // --- HELPER METHODS ---
+        // Preload all events from "Assets/_Project/Resources/Events"
+        _allEvents = Resources.LoadAll<MarketEventData>("Events").ToList();
+        if (_allEvents.Count == 0) Debug.LogWarning("⚠️ No Market Events found in Resources/Events!");
+    }
 
     public void ChangeState(GameState newState)
     {
@@ -52,51 +59,61 @@ public class GameManager : MonoBehaviour
         currentMonth = 1;
 
         CalculateQuota();
+        PickNewBoss(); // Forecast the first boss
     }
 
     public void EndRun()
     {
         Debug.Log("Run Ended. Resetting state...");
 
-        // Reset everything
         currentQuarter = 1;
         currentMonth = 1;
         RunCash = 0;
         RunDeck.Clear();
-        currentQuota = 100; // Fixed: lowercase 'c' to match variable name
+        currentQuota = 25;
+        currentQuarterBoss = null;
 
-        ChangeState(GameState.MainMenu); // Fixed: Added the missing method above
+        ChangeState(GameState.MainMenu);
     }
 
     public void AdvanceCalendar()
     {
-        // 1. Move to next Month (Blind)
         currentMonth++;
 
-        // 2. If Month > 3, we finished the Quarter -> Move to next Quarter (Ante)
+        // New Quarter Logic
         if (currentMonth > 3)
         {
             currentMonth = 1;
             currentQuarter++;
+            PickNewBoss(); // Forecast the new boss for this quarter
         }
 
-        // 3. Recalculate Difficulty
         CalculateQuota();
     }
 
     private void CalculateQuota()
     {
-        // Formula: Base * (Scaling ^ (Quarter-1))
-        // Month 1: 100% | Month 2: 150% | Month 3: 200% (Boss)
-
         float baseForQuarter = BASE_QUOTA * Mathf.Pow(QUARTER_SCALING, currentQuarter - 1);
         float monthMultiplier = 1.0f;
 
         if (currentMonth == 2) monthMultiplier = 1.5f;
-        if (currentMonth == 3) monthMultiplier = 2.0f; // Boss
+        if (currentMonth == 3) monthMultiplier = 2.0f; // Boss Month is hardest
 
         currentQuota = Mathf.RoundToInt(baseForQuarter * monthMultiplier);
 
-        Debug.Log($"📅 NEW DATE: Q{currentQuarter} - Month {currentMonth} | 🎯 QUOTA: ${currentQuota}");
+        Debug.Log($"📅 NEW DATE: Q{currentQuarter}-M{currentMonth} | 🎯 QUOTA: ${currentQuota}");
+    }
+
+    private void PickNewBoss()
+    {
+        if (_allEvents != null && _allEvents.Count > 0)
+        {
+            currentQuarterBoss = _allEvents[Random.Range(0, _allEvents.Count)];
+            Debug.Log($"⚠️ FORECAST: The Boss for Q{currentQuarter} is {currentQuarterBoss.eventName}");
+        }
+        else
+        {
+            currentQuarterBoss = null;
+        }
     }
 }

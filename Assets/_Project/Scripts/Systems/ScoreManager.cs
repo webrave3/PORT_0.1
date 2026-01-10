@@ -7,11 +7,10 @@ using System.Linq;
 public class ScoreManager : MonoBehaviour
 {
     [Header("UI References")]
-    public TextMeshProUGUI scoreText; // Shows "Current Yield" (e.g., $50)
-    public TextMeshProUGUI quotaText; // Shows "Target" (e.g., / $100)
-    public TextMeshProUGUI handTypeText; // NEW: Shows "Sector Rally" etc.
-    public TextMeshProUGUI previewScoreText; // NEW: Shows "(+$20)" next to score
-
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI quotaText;
+    public TextMeshProUGUI handTypeText;
+    public TextMeshProUGUI previewScoreText;
     public Slider volatilitySlider;
     public TextMeshProUGUI volText;
 
@@ -42,15 +41,13 @@ public class ScoreManager : MonoBehaviour
     {
         _flowManager = FindFirstObjectByType<GameFlowManager>();
 
-        // Initialize UI with empty/default state
         if (handTypeText) handTypeText.text = "Select Assets";
         if (previewScoreText) previewScoreText.text = "";
 
-        // Force an update to remove weird "/100" defaults
         UpdateUI();
     }
 
-    // --- NEW: HAND EVALUATION (Visuals Only) ---
+    // --- HAND PREVIEW (Visuals) ---
     public void UpdateHandPreview(List<CardData> selectedCards)
     {
         if (selectedCards.Count == 0)
@@ -60,50 +57,18 @@ public class ScoreManager : MonoBehaviour
             return;
         }
 
-        // Calculate hypothetical score
         int projectedScore = CalculateScoreInternal(selectedCards, out string handName, out float mult);
 
-        // Update UI
         if (handTypeText) handTypeText.text = handName;
         if (previewScoreText) previewScoreText.text = $"(+${projectedScore})";
     }
 
-    // --- CORE LOGIC (Shared by Preview & Commit) ---
-    private int CalculateScoreInternal(List<CardData> cards, out string handName, out float multiplier)
-    {
-        int totalYield = 0;
-        foreach (var card in cards) totalYield += card.baseYield;
-
-        // Synergy Check
-        var sectorGroups = cards.GroupBy(c => c.sector).OrderByDescending(g => g.Count());
-        var primaryGroup = sectorGroups.FirstOrDefault();
-        int count = primaryGroup != null ? primaryGroup.Count() : 0;
-
-        multiplier = 1.0f;
-        handName = "Diversified"; // Default High Card
-
-        if (count >= 3)
-        {
-            handName = $"{primaryGroup.Key} Rally"; // e.g., "Tech Rally"
-            multiplier = SYNERGY_MULTIPLIER;
-        }
-        else if (count == 2)
-        {
-            handName = "Merger"; // Pair
-        }
-
-        if (cards.Count == 1) handName = "Single Asset";
-
-        return Mathf.RoundToInt(totalYield * multiplier);
-    }
-
-    // --- COMMIT SCORE (Playing the hand) ---
+    // --- COMMIT SCORE (Playing) ---
     public int CalculateAndCommitScore(List<CardData> cardsPlayed)
     {
         int totalVol = 0;
         foreach (var card in cardsPlayed) totalVol += card.volatility;
 
-        // Use the shared logic
         int finalScore = CalculateScoreInternal(cardsPlayed, out string handName, out float mult);
 
         Debug.Log($"📈 PLAYED: {handName} for ${finalScore}");
@@ -111,11 +76,67 @@ public class ScoreManager : MonoBehaviour
         AddVolatility(totalVol);
         AddScore(finalScore);
 
-        // Clear preview
         if (handTypeText) handTypeText.text = "";
         if (previewScoreText) previewScoreText.text = "";
 
         return finalScore;
+    }
+
+    // --- CORE CALCULATION LOGIC (Includes Event Modifiers) ---
+    private int CalculateScoreInternal(List<CardData> cards, out string handName, out float multiplier)
+    {
+        // 1. Identify Active Event (Only active in Month 3)
+        string activeEventID = "";
+        if (GameManager.Instance != null && GameManager.Instance.currentMonth == 3)
+        {
+            if (GameManager.Instance.currentQuarterBoss != null)
+            {
+                activeEventID = GameManager.Instance.currentQuarterBoss.eventID;
+            }
+        }
+
+        // 2. Sum Base Yields with Event Logic
+        float totalYield = 0;
+        foreach (var card in cards)
+        {
+            float cardYield = card.baseYield;
+
+            // --- EVENT: BEAR MARKET ---
+            if (activeEventID == "BEAR")
+            {
+                cardYield *= 0.5f; // Halve Yield
+            }
+
+            // --- EVENT: SEC AUDIT ---
+            if (activeEventID == "AUDIT" && card.isIllegal)
+            {
+                cardYield = 0; // Illegal cards worth nothing
+            }
+
+            totalYield += cardYield;
+        }
+
+        // 3. Synergy Check
+        var sectorGroups = cards.GroupBy(c => c.sector).OrderByDescending(g => g.Count());
+        var primaryGroup = sectorGroups.FirstOrDefault();
+        int count = primaryGroup != null ? primaryGroup.Count() : 0;
+
+        multiplier = 1.0f;
+        handName = "Diversified";
+
+        if (count >= 3)
+        {
+            handName = $"{primaryGroup.Key} Rally";
+            multiplier = SYNERGY_MULTIPLIER;
+        }
+        else if (count == 2)
+        {
+            handName = "Merger";
+        }
+
+        if (cards.Count == 1) handName = "Single Asset";
+
+        return Mathf.RoundToInt(totalYield * multiplier);
     }
 
     // --- EXISTING STATE LOGIC ---
@@ -127,7 +148,7 @@ public class ScoreManager : MonoBehaviour
 
     public void AddScore(int amount)
     {
-        if (currentVolatility >= maxVolatility) return; // Circuit Breaker
+        if (currentVolatility >= maxVolatility) return;
         currentYield += amount;
         UpdateUI();
         CheckWinCondition();
@@ -163,17 +184,14 @@ public class ScoreManager : MonoBehaviour
     {
         if (currentYield >= currentQuota)
         {
-            // TurnManager handles the actual win flow now
             Debug.Log("Quota Met within ScoreManager");
         }
     }
 
     public void UpdateUI()
     {
-        // Safety checks + Formatting
         if (scoreText) scoreText.text = $"${currentYield}";
 
-        // Get Quota from GameManager if possible, else use local fallback
         int target = GameManager.Instance ? GameManager.Instance.currentQuota : currentQuota;
         if (quotaText) quotaText.text = $"/ ${target}";
 

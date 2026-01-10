@@ -97,27 +97,19 @@ public class TurnManager : MonoBehaviour
     {
         _roundActive = false;
 
-        // 1. Advance the Calendar Logic
-        if (GameManager.Instance != null)
+        if (GameManager.Instance != null && _scoreManager != null)
         {
+            // 1. BANK THE CASH (Critical Fix)
+            GameManager.Instance.RunCash += _scoreManager.currentYield;
+            Debug.Log($"💰 BANKED: ${_scoreManager.currentYield}. Total: ${GameManager.Instance.RunCash}");
+
+            // 2. Advance Date
             GameManager.Instance.AdvanceCalendar();
         }
 
-        // 2. Show Draft Screen (The Reward)
-        if (draftScreen != null)
-        {
-            draftScreen.ShowDraft();
-
-            // Optional: Clean up the hand visuals so they don't overlap the draft
-            if (_deckManager != null)
-            {
-                foreach (Transform t in _deckManager.handContainer) Destroy(t.gameObject);
-            }
-        }
-        else
-        {
-            Debug.LogError("Draft Screen not linked in TurnManager!");
-        }
+        // 3. Load Shop Scene
+        // Make sure "03_Shop" is added to Build Settings!
+        SceneManager.LoadScene("03_Shop");
     }
 
     private void RoundLost()
