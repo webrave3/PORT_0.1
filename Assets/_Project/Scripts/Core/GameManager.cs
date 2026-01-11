@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
     public GameState CurrentState;
     public List<CardData> RunDeck = new List<CardData>();
     public int RunCash = 0;
+    public int RunHeat = 0; // <--- NEW: Persistent Heat storage
+
+    [Header("Advisors (Relics)")]
+    public List<AdvisorData> ActiveAdvisors = new List<AdvisorData>();
 
     [Header("The Calendar (Progression)")]
     public int currentQuarter = 1;
@@ -47,6 +51,16 @@ public class GameManager : MonoBehaviour
         CurrentState = newState;
     }
 
+    // --- HELPER: ADVISORS ---
+    public bool HasAdvisor(string advisorID)
+    {
+        foreach (var adv in ActiveAdvisors)
+        {
+            if (adv.id == advisorID) return true;
+        }
+        return false;
+    }
+
     // --- PROGRESSION LOGIC ---
 
     public void StartNewRun(List<CardData> starterDeck)
@@ -54,6 +68,10 @@ public class GameManager : MonoBehaviour
         RunDeck.Clear();
         RunDeck.AddRange(starterDeck);
         RunCash = 0;
+        RunHeat = 0; // <--- NEW: Reset Heat at start of run
+
+        // Reset Advisors
+        ActiveAdvisors.Clear();
 
         currentQuarter = 1;
         currentMonth = 1;
@@ -69,7 +87,9 @@ public class GameManager : MonoBehaviour
         currentQuarter = 1;
         currentMonth = 1;
         RunCash = 0;
+        RunHeat = 0; // <--- NEW: Reset Heat
         RunDeck.Clear();
+        ActiveAdvisors.Clear();
         currentQuota = 25;
         currentQuarterBoss = null;
 

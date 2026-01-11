@@ -41,7 +41,7 @@ public class TurnManager : MonoBehaviour
     {
         _roundActive = true;
 
-        // 3. SYNC SCOREMANAGER (Critical Fix)
+        // 3. SYNC SCOREMANAGER
         // We push the correct Quota to ScoreManager and reset its state immediately.
         if (_scoreManager != null)
         {
@@ -51,9 +51,11 @@ public class TurnManager : MonoBehaviour
             // Reset Resources
             _scoreManager.handsRemaining = _scoreManager.maxHands;
             _scoreManager.discardsRemaining = _scoreManager.maxDiscards;
-            _scoreManager.currentVolatility = 0;  // Reset Heat
 
-            _scoreManager.UpdateUI(); // Force visual update NOW (Fixes the "/100" glitch)
+            // REMOVED: _scoreManager.currentVolatility = 0; 
+            // FIX: Heat is now persistent in GameManager, so we DO NOT reset it here.
+
+            _scoreManager.UpdateUI(); // Force visual update NOW
         }
 
         // 4. Initialize Deck
@@ -99,7 +101,7 @@ public class TurnManager : MonoBehaviour
 
         if (GameManager.Instance != null && _scoreManager != null)
         {
-            // 1. BANK THE CASH (Critical Fix)
+            // 1. BANK THE CASH
             GameManager.Instance.RunCash += _scoreManager.currentYield;
             Debug.Log($"💰 BANKED: ${_scoreManager.currentYield}. Total: ${GameManager.Instance.RunCash}");
 
@@ -108,7 +110,6 @@ public class TurnManager : MonoBehaviour
         }
 
         // 3. Load Shop Scene
-        // Make sure "03_Shop" is added to Build Settings!
         SceneManager.LoadScene("03_Shop");
     }
 

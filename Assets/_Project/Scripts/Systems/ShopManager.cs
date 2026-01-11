@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -12,6 +12,10 @@ public class ShopManager : MonoBehaviour
     public int rerollCost = 5;
     public int removeCardCost = 15;
 
+    [Header("Laundering")]
+    public int launderCost = 20;
+    public int launderAmount = 15; // Reduces heat by 15%
+
     [Header("UI References")]
     public Transform shopContainer; // Where items for sale go
     public Transform deckContainer; // Where your current deck is shown
@@ -22,7 +26,11 @@ public class ShopManager : MonoBehaviour
     public Button removeServiceButton;
     public TextMeshProUGUI rerollCostText;
     public TextMeshProUGUI removeCostText;
-    public TextMeshProUGUI feedbackText; // "Welcome to the closing bell..."
+    public TextMeshProUGUI feedbackText;
+
+    // NEW: Laundering UI
+    public Button launderButton;
+    public TextMeshProUGUI launderCostText;
 
     private bool _isRemoveMode = false;
 
@@ -35,6 +43,9 @@ public class ShopManager : MonoBehaviour
         // Setup Buttons
         if (rerollCostText) rerollCostText.text = $"Reroll (${rerollCost})";
         if (removeCostText) removeCostText.text = $"Fire Asset (${removeCardCost})";
+        if (launderCostText) launderCostText.text = $"Launder Heat (${launderCost})";
+
+        CheckLaunderButton();
     }
 
     // --- 1. GENERATE SHOP ---
@@ -43,13 +54,12 @@ public class ShopManager : MonoBehaviour
         // Clear existing
         foreach (Transform child in shopContainer) Destroy(child.gameObject);
 
-        // Get 3 Random Cards (Tier 1 for now)
-        List<CardData> pool = CardLibrary.GetDraftPool();
-
+        // A. SPAWN 3 CARDS
+        List<CardData> cardPool = CardLibrary.GetDraftPool();
         for (int i = 0; i < 3; i++)
         {
-            if (pool.Count == 0) break;
-            CardData randomCard = pool[Random.Range(0, pool.Count)];
+            if (cardPool.Count == 0) break;
+            CardData randomCard = cardPool[Random.Range(0, cardPool.Count)];
 
             // Calculate randomized price
             int price = Mathf.Max(5, cardBaseCost + Random.Range(-cardVariance, cardVariance + 1));
@@ -57,7 +67,28 @@ public class ShopManager : MonoBehaviour
             // Spawn
             GameObject obj = Instantiate(shopSlotPrefab, shopContainer);
             ShopSlot slot = obj.GetComponent<ShopSlot>();
-            slot.SetupForSale(randomCard, price, OnBuyCardClicked);
+            slot.SetupForSale(randomCard, price, OnBuyItemClicked);
+        }
+
+        // B. SPAWN 1 ADVISOR
+        var loadedAdvisors = Resources.LoadAll<AdvisorData>("Advisors");
+        Debug.Log($"🔎 Found {loadedAdvisors.Length} Advisors in Resources/Advisors");
+        List<AdvisorData> advisorPool = new List<AdvisorData>(loadedAdvisors);
+
+        // Filter out ones we already own (Advisors are unique)
+        if (GameManager.Instance != null)
+        {
+            advisorPool.RemoveAll(x => GameManager.Instance.HasAdvisor(x.id));
+        }
+
+        if (advisorPool.Count > 0)
+        {
+            AdvisorData randomAdvisor = advisorPool[Random.Range(0, advisorPool.Count)];
+
+            // Spawn
+            GameObject obj = Instantiate(shopSlotPrefab, shopContainer);
+            ShopSlot slot = obj.GetComponent<ShopSlot>();
+            slot.SetupForAdvisor(randomAdvisor, randomAdvisor.basePrice, OnBuyItemClicked);
         }
     }
 
@@ -74,23 +105,69 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    // --- 2. BUYING LOGIC ---
-    private void OnBuyCardClicked(ShopSlot slot)
+    // --- NEW: LAUNDERING LOGIC ---
+    public void OnLaunderClicked()
+    {
+        if (GameManager.Instance == null) return;
+
+        // Check if there is heat to clean
+        if (GameManager.Instance.RunHeat <= 0)
+        {
+            SetFeedback("Records are already clean.");
+            return;
+        }
+
+        if (TrySpendCash(launderCost))
+        {
+            GameManager.Instance.RunHeat = Mathf.Clamp(GameManager.Instance.RunHeat - launderAmount, 0, 100);
+            SetFeedback($"Records adjusted. Heat -{launderAmount}%.");
+            UpdateCashUI();
+            CheckLaunderButton(); // Update interactability
+        }
+        else
+        {
+            SetFeedback("Insufficient funds for cleanup.");
+        }
+    }
+
+    private void CheckLaunderButton()
+    {
+        if (launderButton != null && GameManager.Instance != null)
+        {
+            // Optional: Disable button if heat is 0
+            launderButton.interactable = GameManager.Instance.RunHeat > 0;
+        }
+    }
+
+    // --- 2. BUYING LOGIC (Cards & Advisors) ---
+    private void OnBuyItemClicked(ShopSlot slot)
     {
         int price = slot.GetPrice();
 
         if (TrySpendCash(price))
         {
-            // Add to Persistent Deck
-            if (GameManager.Instance != null)
+            // CASE A: Buying a CARD
+            if (slot.GetCard() != null)
             {
-                GameManager.Instance.RunDeck.Add(slot.GetData());
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.RunDeck.Add(slot.GetCard());
+                }
+                SetFeedback($"Acquired {slot.GetCard().cardName}!");
+                LoadPlayerDeck(); // Refresh deck view
+            }
+            // CASE B: Buying an ADVISOR
+            else if (slot.GetAdvisor() != null)
+            {
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.ActiveAdvisors.Add(slot.GetAdvisor());
+                }
+                SetFeedback($"Hired Advisor: {slot.GetAdvisor().advisorName}");
             }
 
             // Visuals
             slot.MarkAsSold();
-            LoadPlayerDeck(); // Refresh deck view to show new card
-            SetFeedback($"Acquired {slot.GetData().cardName}!");
         }
         else
         {
@@ -107,7 +184,6 @@ public class ShopManager : MonoBehaviour
         if (_isRemoveMode)
         {
             SetFeedback($"<color=red>SELECT AN ASSET TO FIRE (Cost: ${removeCardCost})</color>");
-            // Optional: Highlight deck UI
         }
         else
         {
@@ -125,7 +201,7 @@ public class ShopManager : MonoBehaviour
                 // Remove from Data
                 if (GameManager.Instance != null)
                 {
-                    GameManager.Instance.RunDeck.Remove(slot.GetData());
+                    GameManager.Instance.RunDeck.Remove(slot.GetCard());
                 }
 
                 // Visuals
@@ -143,7 +219,10 @@ public class ShopManager : MonoBehaviour
         else
         {
             // Just viewing
-            SetFeedback($"{slot.GetData().cardName}: {slot.GetData().description}");
+            if (slot.GetCard() != null)
+            {
+                SetFeedback($"{slot.GetCard().cardName}: {slot.GetCard().description}");
+            }
         }
     }
 

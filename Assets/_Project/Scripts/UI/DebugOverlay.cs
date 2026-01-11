@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Linq;
-using UnityEngine.InputSystem; // --- NEW: Required for New Input System ---
+using UnityEngine.InputSystem;
 
 public class DebugOverlay : MonoBehaviour
 {
@@ -47,8 +47,11 @@ public class DebugOverlay : MonoBehaviour
             $"<color=red>{gm.currentQuarterBoss.eventName} ({gm.currentQuarterBoss.eventID})</color>" :
             "<color=grey>None</color>";
 
+        // FIX: Read Heat from GameManager (gm.RunHeat), not ScoreManager
+        int currentHeat = gm.RunHeat;
+
         string calendar = $"<b>Q{gm.currentQuarter}-M{gm.currentMonth}</b> | Quota: <color=yellow>${gm.currentQuota}</color>";
-        string combat = $"Yield: ${sm.currentYield} | Heat: {sm.currentVolatility}/{sm.maxVolatility}%";
+        string combat = $"Yield: ${sm.currentYield} | Heat: {currentHeat}/{sm.maxVolatility}%";
         string resources = $"Hands: {sm.handsRemaining} | Shreds: {sm.discardsRemaining}";
 
         string deck = "Deck: N/A";
@@ -79,9 +82,7 @@ public class DebugOverlay : MonoBehaviour
         if (kb == null) return;
 
         // --- BOSS CHEATS ---
-        // Press 1 or NumPad 1
         if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) ForceBoss("BEAR");
-        // Press 2 or NumPad 2
         if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) ForceBoss("AUDIT");
 
         // --- GAMEPLAY CHEATS ---

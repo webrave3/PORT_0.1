@@ -21,11 +21,12 @@ public class CardInteraction : MonoBehaviour, IPointerClickHandler, IPointerEnte
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
-        _display = GetComponent<CardDisplay>();
+
+        // --- FIX: Search Children ---
+        _display = GetComponentInChildren<CardDisplay>();
+
         _canvasGroup = GetComponent<CanvasGroup>();
         _deckManager = FindFirstObjectByType<DeckManager>();
-
-        // Find the root canvas so we can drag over other UI elements
         _mainCanvas = GetComponentInParent<Canvas>();
     }
 

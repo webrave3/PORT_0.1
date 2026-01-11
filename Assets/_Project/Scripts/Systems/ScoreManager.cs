@@ -23,7 +23,7 @@ public class ScoreManager : MonoBehaviour
     public int currentQuota = 100;
 
     [Header("Volatility")]
-    public int currentVolatility = 0;
+    // NOTE: Storing Heat in GameManager now for persistence!
     public int maxVolatility = 100;
 
     [Header("Resources")]
@@ -82,9 +82,16 @@ public class ScoreManager : MonoBehaviour
         return finalScore;
     }
 
-    // --- CORE CALCULATION LOGIC (Includes Event Modifiers) ---
+    // --- CORE CALCULATION LOGIC (Includes Event & Advisor Modifiers) ---
     private int CalculateScoreInternal(List<CardData> cards, out string handName, out float multiplier)
     {
+        // 0. CHECK ADVISORS
+        bool hasLobbyist = false;
+        if (GameManager.Instance != null)
+        {
+            hasLobbyist = GameManager.Instance.HasAdvisor("LOBBYIST");
+        }
+
         // 1. Identify Active Event (Only active in Month 3)
         string activeEventID = "";
         if (GameManager.Instance != null && GameManager.Instance.currentMonth == 3)
@@ -95,11 +102,18 @@ public class ScoreManager : MonoBehaviour
             }
         }
 
-        // 2. Sum Base Yields with Event Logic
+        // 2. Sum Base Yields with Modifiers
         float totalYield = 0;
         foreach (var card in cards)
         {
             float cardYield = card.baseYield;
+
+            // --- ADVISOR: THE LOBBYIST ---
+            // Effect: Tech cards get +50% Yield
+            if (hasLobbyist && card.sector == "Tech")
+            {
+                cardYield *= 1.5f;
+            }
 
             // --- EVENT: BEAR MARKET ---
             if (activeEventID == "BEAR")
@@ -139,16 +153,33 @@ public class ScoreManager : MonoBehaviour
         return Mathf.RoundToInt(totalYield * multiplier);
     }
 
-    // --- EXISTING STATE LOGIC ---
+    // --- UPDATED STATE LOGIC (Uses GameManager for Heat) ---
     public void AddVolatility(int amount)
     {
-        currentVolatility = Mathf.Clamp(currentVolatility + amount, 0, maxVolatility);
+        if (GameManager.Instance == null) return;
+
+        // 1. Update Persistent Heat
+        GameManager.Instance.RunHeat = Mathf.Clamp(GameManager.Instance.RunHeat + amount, 0, maxVolatility);
+
         UpdateUI();
+
+        // 2. CHECK FOR GAME OVER (THE RAID)
+        if (GameManager.Instance.RunHeat >= maxVolatility)
+        {
+            Debug.Log("🚨 RAID TRIGGERED! Too much heat.");
+            if (_flowManager != null)
+            {
+                // Trigger Game Over immediately
+                _flowManager.GameOver(false, currentYield);
+            }
+        }
     }
 
     public void AddScore(int amount)
     {
-        if (currentVolatility >= maxVolatility) return;
+        // Prevent scoring if we are already dead from heat
+        if (GameManager.Instance != null && GameManager.Instance.RunHeat >= maxVolatility) return;
+
         currentYield += amount;
         UpdateUI();
         CheckWinCondition();
@@ -198,7 +229,11 @@ public class ScoreManager : MonoBehaviour
         if (handsText) handsText.text = $"{handsRemaining}/{maxHands}";
         if (discardsText) discardsText.text = $"{discardsRemaining}/{maxDiscards}";
 
-        if (volatilitySlider) volatilitySlider.value = currentVolatility;
-        if (volText) volText.text = $"{currentVolatility}%";
+        // --- NEW: Read Heat from GameManager ---
+        int displayHeat = 0;
+        if (GameManager.Instance != null) displayHeat = GameManager.Instance.RunHeat;
+
+        if (volatilitySlider) volatilitySlider.value = displayHeat;
+        if (volText) volText.text = $"{displayHeat}%";
     }
 }

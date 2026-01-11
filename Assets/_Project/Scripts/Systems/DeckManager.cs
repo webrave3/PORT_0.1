@@ -106,7 +106,10 @@ public class DeckManager : MonoBehaviour
     private void SpawnCardVisual(CardData data)
     {
         GameObject newCardObj = Instantiate(cardPrefab, handContainer);
-        CardDisplay display = newCardObj.GetComponent<CardDisplay>();
+
+        // --- FIX: Search Children because script is now on "CardFace" ---
+        CardDisplay display = newCardObj.GetComponentInChildren<CardDisplay>();
+
         if (display != null) display.Setup(data);
     }
 
